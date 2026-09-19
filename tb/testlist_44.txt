@@ -1,0 +1,86 @@
+# testlist_44.txt -- 44 muc chuc nang cua sheet TestCase trong
+# BPU_Testplan_Hybrid_44.xlsx. Day la danh sach MAC DINH cua regression.
+#
+# Sinh tu chinh tep xlsx nen thu tu khop testplan: trong moi nhom, cac test xep
+# theo dung so muc ghi o tieu de nhom.
+#
+# Day la danh sach DUY NHAT: moi test trong tests/ deu thuoc 44 muc nay.
+#
+# Chu thich phai chiem tron dong -- cac script chi bo qua dong bat dau bang '#',
+# khong cat chu thich giua dong.
+
+# --- 1. Reset & Init  (1.1 - 1.2) ---
+rst_state_and_async_test
+rst_outputs_and_recovery_test
+
+# --- 2. Halt  (2.1 - 2.2) ---
+halt_block_and_resume_test
+halt_carry_freeze_test
+
+# --- 3. BTB  (3.1 - 3.3) ---
+btb_write_and_target_test
+btb_read_triple_port_test
+btb_rw_all_test
+
+# --- 4. Local PHT (Pshare)  (4.1 - 4.4) ---
+local_bht_shift_12b_test
+local_pht_counter_and_init_test
+pshare_index_two_stage_test
+local_pht_rw_all_4096_test
+
+# --- 5. Global PHT (Gshare)  (5.1 - 5.4) ---
+gshare_index_and_skew_test
+global_pht_counter_and_init_test
+gshare_aliasing_test
+global_pht_rw_all_test
+
+# --- 6. Choice  (6.1 - 6.4) ---
+choice_no_update_test
+choice_update_and_saturation_test
+choice_carry_source_test
+choice_pc_independence_test
+
+# --- 7. GHR  (7.1) ---
+ghr_shift_gate_shared_test
+
+# --- 8. Dự đoán tại tầng fetch  (8.1 - 8.2) ---
+predict_mux_nxpc2_test
+predict_index_alignment_test
+
+# --- 9. Pre-compute & Gating  (9.1) ---
+precompute_gating_and_opcode_scope_test
+
+# --- 10. Flush Logic  (10.1 - 10.2) ---
+flush_truth_table_test
+flush_uses_carry_not_pc_test
+
+# --- 11. Tầng chuyển hướng  (11.1 - 11.3) ---
+redirect_fetch_tier_test
+redirect_backstop_test
+redirect_priority_matrix_test
+
+# --- 12. Correction  (12.1 - 12.2) ---
+corr_target_matrix_test
+corr_flush_decoupling_test
+
+# --- 13. Output MUX  (13.1) ---
+mux_priority_and_valid_test
+
+# --- 14. Carry-down pipeline  (14.1 - 14.4) ---
+carry_depth_and_merge_test
+carry_paths_and_gating_scope_test
+carry_across_flush_test
+carry_back_to_back_test
+
+# --- 15. Branch Pattern  (15.1 - 15.6) ---
+pattern_saturating_and_cold_test
+pattern_alternating_test_hyb
+pattern_loop_12b_test
+pattern_correlated_test_hyb
+pattern_btb_aliasing_test_hyb
+pattern_nested_loop_test_hyb
+
+# --- 16. Stress / Random  (16.1 - 16.3) ---
+random_pipeline_coherent_test
+stress_long_run_hyb_test
+stress_btb_full_test

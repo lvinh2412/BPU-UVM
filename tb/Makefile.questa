@@ -1,0 +1,250 @@
+#==============================================================================
+# QuestaSim build/run/coverage flow for the BPU UVM testbench.
+#
+# Mirrors the Xcelium flow in ./Makefile and ./run.f. Test files, reference
+# model and RTL are unchanged — this file only replaces the infrastructure.
+#
+# Xcelium -> QuestaSim mapping:
+#   xrun -elaborate       ->  vlib/vmap + vlog + vopt
+#   -access +rwc          ->  vopt +acc          (required by the backdoor)
+#   -uvmhome $UVMHOME     ->  vlog $(UVM_SRC)/uvm_pkg.sv + vsim -sv_lib uvm_dpi
+#   -timescale 1ns/100ps  ->  vlog -timescale 1ns/100ps
+#   -coverage all         ->  vopt +cover=bcesxf  + vsim -coverage
+#   imc                   ->  vcover report / vsim -viewcov
+#
+# Usage:
+#   make -f Makefile.questa build
+#   make -f Makefile.questa run     TESTNAME=rst_state_and_async_test
+#   make -f Makefile.questa covrun  TESTNAME=rst_state_and_async_test
+#   make -f Makefile.questa covmerge covreport
+#==============================================================================
+
+SHELL := /bin/bash
+
+TESTNAME    ?= rst_state_and_async_test
+UVM_VERBOSITY ?= UVM_MEDIUM
+
+# --- Tool locations ----------------------------------------------------------
+QUESTA_ROOT ?= /home/abc24/eda/questa/questaSim/questasim
+
+# UVM 1.2 — matches the Cadence CDNS-1.2 the tests were written against.
+# (The default `mtiUvm` logical library maps to uvm-1.1d in modelsim.ini, so it
+# is deliberately not used here.)
+#
+# We compile the UVM *source* into our own work library with the SAME
+# -timescale as the design rather than linking Questa's precompiled uvm-1.2
+# library. This mirrors what xrun -uvmhome does, and it is REQUIRED for
+# correctness: bpu_base_test does `set_drain_time(this, 2000ns)`, and a time
+# literal is scaled by the timeunit of the scope it is compiled in, then
+# re-scaled where uvm_objection executes `#drain`. Against the precompiled
+# library those two timeunits differ (1ns vs 1ps), so the 2000ns drain silently
+# became 2ns and the run ended ~2000ns early (5 checked items instead of 205).
+# Compiling UVM at the design's timescale keeps both scopes at 1ns.
+UVM_SRC     := $(QUESTA_ROOT)/verilog_src/uvm-1.2/src
+UVM_DPI     := $(QUESTA_ROOT)/uvm-1.2/linux_x86_64/uvm_dpi
+
+# --- Design tops -------------------------------------------------------------
+TOPS        := bpu_tb_top bpu_hw_top
+OPT_TOP     := top_opt
+
+# --- Compile options ---------------------------------------------------------
+TIMESCALE   := 1ns/100ps
+
+INCDIRS := \
+  +incdir+$(UVM_SRC) \
+  +incdir+../bpu_agent \
+  +incdir+../clock_and_reset \
+  +incdir+../bpu_module \
+  +incdir+. \
+  +incdir+./tests
+
+VLOG_OPTS := -sv -timescale $(TIMESCALE) $(INCDIRS)
+
+# vopt-2122: "Invalid format specification". Triggered by C-style format flags
+# (e.g. "%+.1f") in $sformatf log messages, which xrun accepts but vopt rejects.
+# Cosmetic (log text only). Giu lai de phong: chi anh huong chuoi log, khong
+# anh huong ket qua kiem chung.
+VOPT_OPTS := -suppress 2122
+
+# Coverage metrics: b=branch c=condition e=expression s=statement f=fsm x=extended
+# (x = extended toggle, a superset of t).
+#
+# Code coverage is instrumented at COMPILE time (vlog +cover) and only on the
+# four RTL files below — the UVM/test/interface/tb .sv sources are compiled
+# without it, so they never appear in the report. vopt is therefore run WITHOUT
+# a global +cover, which would re-instrument the whole design.
+#
+# Covergroups in bpu_coverage.sv are standard SV and need no extra switch: they
+# are collected by `vsim -coverage` regardless of any +cover instrumentation.
+COVER_METRICS := bcesxf
+
+# vcover's -code letters are NOT the same set as vlog's +cover letters: there is
+# no 'x' (extended toggle) at report time — toggle is plain 't'. Passing the
+# vlog string (bcesxf) to `vcover report -code` silently drops statement,
+# condition and expression from the output, which is why the report showed only
+# branch+toggle even though the UCDB held all of them. 't' reports the extended
+# toggle data that +cover=x collected.
+REPORT_METRICS := bcefst
+
+# --- Source lists (order matters: interfaces -> packages -> RTL -> tops) ------
+# The interfaces are compiled BEFORE the packages: the packages reference the
+# interface types (e.g. `virtual bpu_if`), and unlike xrun's single-pass
+# compilation unit, vlog must already know the interface at that point.
+SV_IF := \
+  ../bpu_agent/bpu_if.sv \
+  ../clock_and_reset/clock_and_reset_if.sv
+
+SV_PKG := \
+  ../bpu_agent/bpu_pkg.sv \
+  ../clock_and_reset/clock_and_reset_pkg.sv \
+  ../bpu_module/bpu_module_pkg.sv
+
+# BPU DUT RTL (submodules before top)
+RTL := \
+  ../rtl/bpu_reg.v \
+  ../rtl/bpu_predictor.v \
+  ../rtl/bpu_ctrl.v \
+  ../rtl/bpu_top.v
+
+# The design units in the files above — the only ones code coverage is reported
+# for. Used both for the vlog instrumentation and the vcover -du filter.
+RTL_DU := bpu_reg bpu_predictor bpu_ctrl bpu_top
+
+SV_TOP := \
+  clkgen.sv \
+  bpu_tb_top.sv \
+  bpu_hw_top.sv
+
+#==============================================================================
+# Targets
+#==============================================================================
+
+.PHONY: all build lib compile compile_cov opt opt_cov build_cov run covrun \
+        covmerge covexclude covreport covview covview_excl clean
+
+all: build run
+
+lib:
+	vlib work
+	vmap work work
+
+# UVM is compiled from source at the design's timescale — see the UVM_SRC note.
+compile: lib
+	vlog $(VLOG_OPTS) $(UVM_SRC)/uvm_pkg.sv 2>&1 | tee vlog.log
+	vlog $(VLOG_OPTS) $(SV_IF) $(SV_PKG) $(RTL) $(SV_TOP) 2>&1 | tee -a vlog.log
+
+# Same as `compile`, but the four RTL files are instrumented for code coverage
+# and nothing else is. Split into three vlog calls so +cover applies to the RTL
+# only; the .sv sources (UVM, tests, interfaces, tb tops) stay uninstrumented.
+compile_cov: lib
+	vlog $(VLOG_OPTS) $(UVM_SRC)/uvm_pkg.sv 2>&1 | tee vlog.log
+	vlog $(VLOG_OPTS) $(SV_IF) $(SV_PKG) 2>&1 | tee -a vlog.log
+	vlog $(VLOG_OPTS) +cover=$(COVER_METRICS) $(RTL) 2>&1 | tee -a vlog.log
+	vlog $(VLOG_OPTS) $(SV_TOP) 2>&1 | tee -a vlog.log
+
+# +acc is REQUIRED: bpu_backdoor.sv uses uvm_hdl_force/read/deposit/release,
+# which need read-write access to the DUT regfile and the interface nets.
+# This is the QuestaSim equivalent of Xcelium's -access +rwc.
+opt:
+	vopt +acc $(TOPS) $(VOPT_OPTS) -o $(OPT_TOP) 2>&1 | tee vopt.log
+
+build: compile opt
+
+# Optimized build carrying the compile-time coverage instrumentation.
+# NOTE: deliberately NO `+cover` here. vopt +cover is global — it re-instruments
+# every design unit it optimizes, including the UVM/test code, which is what put
+# the testbench into the report. vopt preserves the per-file instrumentation
+# vlog already applied to the RTL, so the RTL is still covered.
+opt_cov:
+	vopt +acc $(TOPS) $(VOPT_OPTS) -o $(OPT_TOP)_cov \
+	  2>&1 | tee vopt_cov.log
+
+build_cov: compile_cov opt_cov
+
+# vsim-PLI-3947 is the run-time twin of vopt-2122: the same format-flag warning,
+# re-reported when the design loads.
+VSIM_OPTS := -c -sv_lib $(UVM_DPI) -suppress 3947 \
+             +UVM_TESTNAME=$(TESTNAME) +UVM_VERBOSITY=$(UVM_VERBOSITY)
+
+run:
+	vsim $(VSIM_OPTS) $(OPT_TOP) -do "run -all; quit -f" \
+	  2>&1 | tee sim_questa_$(TESTNAME).log
+
+# Run with coverage collection and save a UCDB for this test.
+# -onfinish stop is REQUIRED: UVM's run_test() ends with $finish, which in batch
+# mode exits vsim immediately — the `coverage save` in the -do string would never
+# run and no UCDB would be written. `stop` returns control to the do-script so
+# the database is saved, then we quit explicitly.
+covrun: build_cov
+	vsim $(VSIM_OPTS) -coverage -onfinish stop $(OPT_TOP)_cov \
+	  -do "run -all; coverage save cov_$(TESTNAME).ucdb; quit -f" \
+	  2>&1 | tee sim_questa_cov_$(TESTNAME).log
+
+# Merge every per-test UCDB into one.
+covmerge:
+	vcover merge -out merged.ucdb cov_*.ucdb
+
+# HTML report (open cov_html/index.html in a browser) + a text summary.
+#
+# The text report is built in two passes and concatenated, because the two
+# halves need different filters:
+#   1. functional — the cg_bpu covergroups (-cvg), which live in a class in
+#      bpu_module_pkg and so are NOT selected by a -du RTL filter;
+#   2. code — restricted with -du to the four RTL design units.
+# Even though only the RTL is instrumented, the -du filter is kept so that any
+# future +cover slip cannot leak testbench code back into the report.
+DU_FILTER := $(addprefix -du=,$(RTL_DU))
+
+# Toggle-coverage exclusions: bits that cannot flip for ARCHITECTURAL reasons
+# (word-aligned PC/target LSBs, even B-immediate LSB, the reset loop iterator,
+# and the dead NXPC-side local read ports). cov_exclude.do carries the reason
+# for each. Applying it turns merged.ucdb into merged_excl.ucdb, from which the
+# report is generated so the functional-bit toggle coverage reads its true ~100%.
+# (The exclusions are toggle-only, so covergroup coverage is identical either way.)
+EXCL_DO   := cov_exclude.do
+EXCL_UCDB := merged_excl.ucdb
+
+covexclude: covmerge
+	vsim -c -viewcov merged.ucdb \
+	  -do "do $(EXCL_DO); coverage save $(EXCL_UCDB); quit -f"
+
+covreport: covexclude
+	vcover report -html -htmldir cov_html -details $(EXCL_UCDB)
+	@rm -f cov_report.txt
+	vcover report -details -cvg -output cov_report_func.txt $(EXCL_UCDB)
+	vcover report -details -code $(REPORT_METRICS) $(DU_FILTER) \
+	  -output cov_report_code.txt $(EXCL_UCDB)
+	@./gen_cov_summary.sh                                                  >> cov_report.txt
+	@echo ""                                                               >> cov_report.txt
+	@echo "==============================================================" >> cov_report.txt
+	@echo " RAW vcover — FUNCTIONAL COVERAGE (covergroups)"                >> cov_report.txt
+	@echo "==============================================================" >> cov_report.txt
+	@cat cov_report_func.txt                                               >> cov_report.txt
+	@echo ""                                                               >> cov_report.txt
+	@echo "==============================================================" >> cov_report.txt
+	@echo " RAW vcover — CODE COVERAGE, RTL only ($(RTL_DU))"              >> cov_report.txt
+	@echo "==============================================================" >> cov_report.txt
+	@cat cov_report_code.txt                                               >> cov_report.txt
+	@echo "HTML: $(CURDIR)/cov_html/index.html"
+	@echo "TEXT: $(CURDIR)/cov_report.txt"
+
+# Interactive coverage GUI (the reason for moving off Xcelium).
+# covview      -> raw merged.ucdb (toggle NOT excluded; matches what the GUI
+#                 showed before — ~76-93% toggle because the architecturally
+#                 un-flippable bits are still counted).
+# covview_excl -> merged_excl.ucdb, the same database the text/HTML report is
+#                 built from, so the GUI numbers match cov_report.txt (100%).
+covview:
+	vsim -gui -viewcov merged.ucdb &
+
+covview_excl: $(EXCL_UCDB)
+	vsim -gui -viewcov $(EXCL_UCDB) &
+
+# Regenerate merged_excl.ucdb on demand if it is missing or older than merged.ucdb.
+$(EXCL_UCDB): merged.ucdb $(EXCL_DO)
+	vsim -c -viewcov merged.ucdb \
+	  -do "do $(EXCL_DO); coverage save $(EXCL_UCDB); quit -f"
+
+clean:
+	rm -rf work/ transcript vlog.log vopt*.log sim_questa_*.log *.wlf *.ucdb cov_html/ cov_report*.txt \
+	       vsim.dbg modelsim.ini covhtmlreport/

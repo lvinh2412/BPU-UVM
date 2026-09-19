@@ -1,0 +1,602 @@
+Coverage Report by DU with details
+
+=================================================================================
+=== Design Unit: work.bpu_ctrl
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        21        21         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for Design Unit work.bpu_ctrl
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/bpu_ctrl.v
+------------------------------------IF Branch------------------------------------
+    71                                     22748     Count coming in to IF
+    71              1                        152     
+    76              1                      21821     
+                                             775     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    103                                    57617     Count coming in to IF
+    103             1                      21078     
+    104             1                      36539     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    104                                    36539     Count coming in to IF
+    104             2                      18093     
+    105             1                      18446     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    104                                    18093     Count coming in to IF
+    104             3                      13979     
+    104             4                       4114     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    105                                    18446     Count coming in to IF
+    105             2                       8719     
+    105             3                       9727     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    111                                    65362     Count coming in to IF
+    111             1                      30340     
+    112             1                      35022     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    111                                    30340     Count coming in to IF
+    111             2                      13118     
+    111             3                      17222     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    116                                    80061     Count coming in to IF
+    116             1                      18135     
+    117             1                      61926     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    117                                    61882     Count coming in to IF
+    117             2                      22070     
+    118             1                      39812     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    118                                    39768     Count coming in to IF
+    118             2                      13752     
+    119             1                      26016     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                     16        16         0   100.00%
+
+================================Expression Details================================
+
+Expression Coverage for Design Unit work.bpu_ctrl --
+
+  File ../rtl/bpu_ctrl.v
+----------------Focused Expression View-----------------
+Line       51 Item    1  (fetch_opcode == 99)
+Expression totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       52 Item    1  ((flush_in == 0) || (flush_in == 1))
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       55 Item    1  ((btb_valid_nxpc2 && predict_taken_nxpc2) && fetch_ready)
+Expression totals: 3 of 3 input terms covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       59 Item    1  ((fetch_is_branch && ~btb_valid_nxpc) && fetch_ready)
+Expression totals: 3 of 3 input terms covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       85 Item    1  (predic_taken_delay_1 | d_valid)
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       94 Item    1  (is_branch && (predicted_taken != branch_taken))
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       115 Item    1  ((corr_valid || d_valid) || f_valid)
+Expression totals: 3 of 3 input terms covered = 100.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      27        27         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for Design Unit work.bpu_ctrl --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/bpu_ctrl.v
+    51              1                       8897     
+    52              1                       1616     
+    55              1                      25705     
+    59              1                      17822     
+    60              1                      17057     
+    70              1                      22748     
+    72              1                        152     
+    72              2                        152     
+    73              1                        152     
+    73              2                        152     
+    74              1                        152     
+    74              2                        152     
+    75              1                        152     
+    75              2                        152     
+    78              1                      21821     
+    79              1                      21821     
+    80              1                      21821     
+    81              1                      21821     
+    85              1                      21821     
+    86              1                      21821     
+    87              1                      21821     
+    88              1                      21821     
+    94              1                      41186     
+    103             1                      57661     
+    110             1                      65406     
+    115             1                      41604     
+    116             1                      80105     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        706       706         0   100.00%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.bpu_ctrl
+
+                                              Node      1H->0L      0L->1H       0L->Z       Z->0L       1H->Z       Z->H1     ExtMode  "Coverage"
+                                              ---------------------------------------------------------------------------------------------------
+
+========
+(n*) - Number was not used in coverage calculations performed by extended toggle algorithms.
+
+Extended Toggle Coverage Calculation Criteria:
+-----------------------------------------------
+	ExtMode 1: 0L->1H & 1H->0L & any one 'Z' transition (to/from 'Z').
+	ExtMode 2: 0L->1H & 1H->0L & one transition to 'Z' & one transition from 'Z'.
+	ExtMode 3: 0L->1H & 1H->0L & all 'Z' transitions.
+========
+
+Total Node Count     =        353 
+Toggled Node Count   =        353 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =     100.00% (706 of 706 bins)
+
+=================================================================================
+=== Design Unit: work.bpu_predictor
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        27        27         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for Design Unit work.bpu_predictor
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/bpu_predictor.v
+------------------------------------IF Branch------------------------------------
+    58                                     25965     Count coming in to IF
+    58              1                      11258     
+    58              2                      14707     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    65                                    142756     Count coming in to CASE
+    66              1                      35474     
+    67              1                      26557     
+    68              1                      28732     
+    69              1                      51729     
+    70              1                        264     
+Branch totals: 5 hits of 5 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    66                                     35474     Count coming in to IF
+    66              2                      19812     
+    66              3                      15662     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    67                                     26557     Count coming in to IF
+    67              2                      17620     
+    67              3                       8937     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    68                                     28732     Count coming in to IF
+    68              2                      19043     
+    68              3                       9689     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    69                                     51729     Count coming in to IF
+    69              2                      29621     
+    69              3                      22108     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    81                                     69665     Count coming in to IF
+    81              1                      47801     
+    82              1                      21864     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    87                                     79787     Count coming in to IF
+    87              1                      63143     
+    88              1                      16644     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    92                                     67885     Count coming in to IF
+    92              1                      52927     
+    93              1                      14958     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    106                                    53802     Count coming in to IF
+    106             1                      15452     
+    107             1                      38350     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    107                                    38350     Count coming in to IF
+    107             2                      10970     
+    108             1                      27380     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    112                                    46320     Count coming in to IF
+    112             1                      32655     
+    113             1                      13665     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       4         4         0   100.00%
+
+================================Condition Details================================
+
+Condition Coverage for Design Unit work.bpu_predictor --
+
+  File ../rtl/bpu_predictor.v
+----------------Focused Condition View-------------------
+Line       106 Item    1  (~local_correct && global_correct)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       107 Item    1  (local_correct && ~global_correct)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                      9         9         0   100.00%
+
+================================Expression Details================================
+
+Expression Coverage for Design Unit work.bpu_predictor --
+
+  File ../rtl/bpu_predictor.v
+-----------Focused Expression View (Bimodal)------------
+Line       58 Item    1  (choice_data_nxpc2[1]? global_pht_data_nxpc2[1]: local_pht_data_nxpc2[1])
+Expression totals: 3 of 3 input terms covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       97 Item    1  (local_carry != global_carry)
+Expression totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       98 Item    1  (local_carry == branch_taken)
+Expression totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       99 Item    1  (global_carry == branch_taken)
+Expression totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Expression View-----------------
+Line       103 Item    1  ((disagree && is_branch) && btb_valid_pc)
+Expression totals: 3 of 3 input terms covered = 100.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      16        16         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for Design Unit work.bpu_predictor --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/bpu_predictor.v
+    58              1                      26009     
+    66              1                      35474     
+    67              1                      26557     
+    68              1                      28732     
+    69              1                      51729     
+    70              1                        264     
+    77              1                      32928     
+    81              1                      69709     
+    87              1                      79875     
+    92              1                      67973     
+    97              1                      13584     
+    98              1                      35643     
+    99              1                      37571     
+    103             1                      51222     
+    106             1                      53846     
+    112             1                      46364     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        338       338         0   100.00%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.bpu_predictor
+
+                                              Node      1H->0L      0L->1H       0L->Z       Z->0L       1H->Z       Z->H1     ExtMode  "Coverage"
+                                              ---------------------------------------------------------------------------------------------------
+
+========
+(n*) - Number was not used in coverage calculations performed by extended toggle algorithms.
+
+Extended Toggle Coverage Calculation Criteria:
+-----------------------------------------------
+	ExtMode 1: 0L->1H & 1H->0L & any one 'Z' transition (to/from 'Z').
+	ExtMode 2: 0L->1H & 1H->0L & one transition to 'Z' & one transition from 'Z'.
+	ExtMode 3: 0L->1H & 1H->0L & all 'Z' transitions.
+========
+
+Total Node Count     =        169 
+Toggled Node Count   =        169 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =     100.00% (338 of 338 bins)
+
+=================================================================================
+=== Design Unit: work.bpu_reg
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        18        18         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for Design Unit work.bpu_reg
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/bpu_reg.v
+------------------------------------IF Branch------------------------------------
+    88                                     33372     Count coming in to IF
+    88              1                        152     
+    94              1                      18650     
+    97              1                      14570     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    110                                    36534     Count coming in to IF
+    110             1                        152     
+    115             1                      21816     
+    117             1                      14566     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    134                                    36456     Count coming in to IF
+    134             1                        152     
+    139             1                      21823     
+    141             1                      14481     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    157                                    37718     Count coming in to IF
+    157             1                        152     
+    162             1                      22986     
+    164             1                      14580     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    176                                    24791     Count coming in to IF
+    176             1                        152     
+    182             1                       5315     
+    184             1                      19324     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    195                                    37377     Count coming in to IF
+    195             1                        152     
+    198             1                      22841     
+    200             1                      14384     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                      12        12         0   100.00%
+
+================================Condition Details================================
+
+Condition Coverage for Design Unit work.bpu_reg --
+
+  File ../rtl/bpu_reg.v
+----------------Focused Condition View-------------------
+Line       94 Item    1  (btb_wr_en && ~halt)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       115 Item    1  (local_bht_wr_en && ~halt)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       139 Item    1  (local_pht_wr_en && ~halt)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       162 Item    1  (global_pht_wr_en && ~halt)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       182 Item    1  (choice_wr_en && ~halt)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       198 Item    1  (ghr_wr_en && ~halt)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      53        53         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for Design Unit work.bpu_reg --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File ../rtl/bpu_reg.v
+    77              1                      22319     
+    78              1                      22365     
+    80              1                      20722     
+    81              1                      20611     
+    82              1                      20768     
+    87              1                      33372     
+    89              1                        152     
+    89              2                     155648     
+    90              1                     155648     
+    91              1                     155648     
+    95              1                      18650     
+    96              1                      18650     
+    98              1                      14570     
+    99              1                      14570     
+    106             1                      40612     
+    109             1                      36534     
+    111             1                        152     
+    111             2                     155648     
+    112             1                     155648     
+    116             1                      21816     
+    118             1                      14566     
+    125             1                      40612     
+    126             1                      40658     
+    129             1                      47131     
+    130             1                      26169     
+    133             1                      36456     
+    135             1                        152     
+    135             2                     622592     
+    136             1                     622592     
+    140             1                      21823     
+    142             1                      14481     
+    148             1                      31326     
+    149             1                      31372     
+    152             1                      39524     
+    153             1                      39570     
+    156             1                      37718     
+    158             1                        152     
+    158             2                     155648     
+    159             1                     155648     
+    163             1                      22986     
+    165             1                      14580     
+    171             1                      19685     
+    172             1                      19731     
+    175             1                      24791     
+    178             1                        152     
+    178             2                     155648     
+    179             1                     155648     
+    183             1                       5315     
+    185             1                      19324     
+    194             1                      37377     
+    196             1                        152     
+    199             1                      22841     
+    201             1                      14384     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        682       682         0   100.00%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.bpu_reg
+
+                                              Node      1H->0L      0L->1H       0L->Z       Z->0L       1H->Z       Z->H1     ExtMode  "Coverage"
+                                              ---------------------------------------------------------------------------------------------------
+
+========
+(n*) - Number was not used in coverage calculations performed by extended toggle algorithms.
+
+Extended Toggle Coverage Calculation Criteria:
+-----------------------------------------------
+	ExtMode 1: 0L->1H & 1H->0L & any one 'Z' transition (to/from 'Z').
+	ExtMode 2: 0L->1H & 1H->0L & one transition to 'Z' & one transition from 'Z'.
+	ExtMode 3: 0L->1H & 1H->0L & all 'Z' transitions.
+========
+
+Total Node Count     =        341 
+Toggled Node Count   =        341 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =     100.00% (682 of 682 bins)
+
+=================================================================================
+=== Design Unit: work.bpu_top
+=================================================================================
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        738       738         0   100.00%
+
+================================Toggle Details================================
+
+Toggle Coverage for Design Unit work.bpu_top
+
+                                              Node      1H->0L      0L->1H       0L->Z       Z->0L       1H->Z       Z->H1     ExtMode  "Coverage"
+                                              ---------------------------------------------------------------------------------------------------
+
+========
+(n*) - Number was not used in coverage calculations performed by extended toggle algorithms.
+
+Extended Toggle Coverage Calculation Criteria:
+-----------------------------------------------
+	ExtMode 1: 0L->1H & 1H->0L & any one 'Z' transition (to/from 'Z').
+	ExtMode 2: 0L->1H & 1H->0L & one transition to 'Z' & one transition from 'Z'.
+	ExtMode 3: 0L->1H & 1H->0L & all 'Z' transitions.
+========
+
+Total Node Count     =        369 
+Toggled Node Count   =        369 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =     100.00% (738 of 738 bins)
+
+
+Total Coverage By Design Unit (filtered view): 100.00%
+

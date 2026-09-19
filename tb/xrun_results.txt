@@ -1,0 +1,47 @@
+# BPU regression results (Xcelium) -- sinh boi run_all_xrun.tcl
+# cot: TEST VERDICT MISCMP UVM_ERROR UVM_FATAL SECONDS
+rst_state_and_async_test PASS 0 0 0 6
+rst_outputs_and_recovery_test PASS 0 0 0 3
+halt_block_and_resume_test PASS 0 0 0 3
+halt_carry_freeze_test PASS 0 0 0 2
+btb_write_and_target_test PASS 0 0 0 3
+btb_read_triple_port_test PASS 0 0 0 2
+btb_rw_all_test PASS 0 0 0 5
+local_bht_shift_12b_test PASS 0 0 0 3
+local_pht_counter_and_init_test PASS 0 0 0 2
+pshare_index_two_stage_test PASS 0 0 0 2
+local_pht_rw_all_4096_test PASS 0 0 0 55
+gshare_index_and_skew_test PASS 0 0 0 2
+global_pht_counter_and_init_test PASS 0 0 0 2
+gshare_aliasing_test PASS 0 0 0 3
+global_pht_rw_all_test PASS 0 0 0 2
+choice_no_update_test PASS 0 0 0 9
+choice_update_and_saturation_test PASS 0 0 0 12
+choice_carry_source_test PASS 0 0 0 3
+choice_pc_independence_test PASS 0 0 0 5
+ghr_shift_gate_shared_test PASS 0 0 0 3
+predict_mux_nxpc2_test PASS 0 0 0 3
+predict_index_alignment_test PASS 0 0 0 3
+precompute_gating_and_opcode_scope_test PASS 0 0 0 2
+flush_truth_table_test PASS 0 0 0 4
+flush_uses_carry_not_pc_test PASS 0 0 0 2
+redirect_fetch_tier_test PASS 0 0 0 3
+redirect_backstop_test PASS 0 0 0 3
+redirect_priority_matrix_test PASS 0 0 0 3
+corr_target_matrix_test PASS 0 0 0 2
+corr_flush_decoupling_test PASS 0 0 0 3
+mux_priority_and_valid_test PASS 0 0 0 2
+carry_depth_and_merge_test PASS 0 0 0 3
+carry_paths_and_gating_scope_test PASS 11 0 0 2
+carry_across_flush_test PASS 0 0 0 3
+carry_back_to_back_test PASS 0 0 0 2
+pattern_saturating_and_cold_test PASS 0 0 0 3
+pattern_alternating_test_hyb PASS 0 0 0 3
+pattern_loop_12b_test PASS 0 0 0 6
+pattern_correlated_test_hyb PASS 0 0 0 8
+pattern_btb_aliasing_test_hyb PASS 0 0 0 3
+pattern_nested_loop_test_hyb PASS 0 0 0 3
+random_pipeline_coherent_test PASS 0 0 0 7
+stress_long_run_hyb_test PASS 0 0 0 15
+stress_btb_full_test PASS 0 0 0 6
+# TOTAL PASS=44 FAIL=0 ELAPSED=221s
